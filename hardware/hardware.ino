@@ -25,6 +25,7 @@ typedef struct {
   int pm1;
   int pm25;
   int pm10;
+  int al;
 } 
 Data;
 
@@ -56,6 +57,9 @@ SoftwareSerial PMS5003_Serial(11, 10); // RX, TX
 #define sensor A0
 int coValue;
 
+// ban dau
+double t0 = 0;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -65,6 +69,7 @@ void setup() {
 //  Serial.println("DHTxx test!");
   initPressure();
   dht.begin();
+  t0 = getTemperaturePressure();
   
   // nRF24 
   initRF24();
@@ -72,7 +77,9 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  sendData();
+//  if(senddata){
+    sendData();
+//  }
   delay(50);
 }
 
@@ -104,7 +111,7 @@ void sendData(){
   data.pm10 = pm[2];
   coValue = (analogRead(sensor)/1024)*5*200;
   data.co = coValue;
-
+  data.al = getAltitudePressure(getTemperaturePressure(), t0);
   radio.write(&data, sizeof(data));
 }
 
@@ -390,4 +397,3 @@ int transmitPM10(unsigned char *thebuf)
   PM10Val = ((thebuf[7]<<8) + thebuf[8]); //count PM10 value of the air detector module  
   return PM10Val;
 }
-

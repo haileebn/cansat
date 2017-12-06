@@ -16,9 +16,17 @@ typedef struct {
   int pm1;
   int pm25;
   int pm10;
+  int al;
 } 
 A_t;
 
+typedef struct {
+  float pressure;
+  int temp;
+} 
+DataInit;
+
+DataInit dataInit;
 
 A_t data;
  String json_string;
@@ -38,6 +46,8 @@ void loop(){
   if (radio.available()){
     while (radio.available()){
       radio.read(&data, sizeof(data));
+//      radio.read(&dataInit, sizeof(dataInit));
+//      Serial.println(data.pressure);
        json_string = String("{\"time\":\"" + String(data.timestamp) + "\",") 
                 + String("\"values\":{")
                 + String("\"LAT\":\"" + String(data.lat,10) + "\",")
@@ -48,7 +58,8 @@ void loop(){
                 + String("\"pm1\":\"" + String(data.pm1) + "\",")
                 + String("\"pm25\":\"" + String(data.pm25) + "\",")
                 + String("\"pm10\":\"" + String(data.pm10) + "\",")
-                + String("\"CO\":\"" + String(data.co) + "\"")
+                + String("\"CO\":\"" + String(data.co) + "\",")
+                + String("\"al\":\"" + String(data.al) + "\"")
                 + String("}}");
        Serial.println(json_string);
     }
